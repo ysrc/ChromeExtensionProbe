@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <META charset="utf8" />
+    <title>Chrome Extensions Probe - evi1m0</title>
+    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <style>
+      div#test > div , div#plugins{
+        margin: -10px;
+      }
+
+      div#test {
+        margin-bottom: -15px;
+      }
+
+      div#plugins > ul {
+         margin-top: -10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Chrome installed extensions / plugins</h1>
+    <h2 id="loading">Loading...</h2>
+    <hr><br>
+
+    <div id="test">
+    </div>
+    <br>
+    <div id="plugins">
+    </div>
+
+    <script>
+      (function (){
+        function testing(id, name, war, curl){
+          var urlrule = 'chrome-extension://' + id + '/';
+          for (let w in war){
+            if(war[w].startsWith('/')) {
+              war[w] = war[w].replace('/', '');
+            }
+            if (war[w] == '*') {
+              url = urlrule + 'manifest.json';
+            } else {
+              url = urlrule + war[w];
+            }
+            $('body').append('');
+            var tmp = document.createElement('script');
+            tmp.src = url;
+            tmp.setAttribute('class', id);
+            tmp.onerror = function(){
+              $('.'+id).remove();
+            }
+            tmp.onload = function(){
+              if ($('#'+id).length < 1){
+                var atmp = document.createElement('div');
+                atmp.setAttribute('id', id)
+                atmp.innerHTML = `
+                <ul>
+                  <li><b>`+name+`</b> (<a href=`+curl+`>`+curl+`</a>)</li>
+                </url>`;
+                document.getElementById('test').appendChild(atmp);
+              }
+            }
+
+            document.getElementById('test').appendChild(tmp);
+
+          }
+        }
+
+
+        // json data parse
+        $.get("ext1000up.json" + "?_=" + new Date().valueOf(), function(ext){
+            for (let n in ext.data) {
+              var id = ext.data[n].id;
+              var name = ext.data[n].name;
+              var war = ext.data[n].web_accessible_resources;
+              var curl = ext.data[n].url;
+              testing(id, name, war, curl);
+            }
+            $('#loading').remove();
+        })
+
+        for(let n=0; n< navigator.plugins.length; n++){
+          var pluginsobj = navigator.plugins[n];
+          $('#plugins').append(`
+            <ul>
+              <li><b>`+pluginsobj.name+`</b>, `+pluginsobj.filename+`, `+pluginsobj.description+`</li>
+            </ul>`);
+        }
+      })()
+    </script>
+  </body>
+</html>
+
