@@ -1,0 +1,3 @@
+[submodule "extSpider"]
+	path = extSpider
+	url = https://github.com/ysrc/ChromeExtensionSpider.git
